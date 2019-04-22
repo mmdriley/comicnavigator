@@ -1,40 +1,49 @@
 <!doctype html>
 <html>
 <head>
+<title>comicnavigator</title>
 <script>
-(function() {
-
 var links = [
   'https://xkcd.com/2136/',
   'https://xkcd.com/2137/',
   'https://xkcd.com/2138/',
 ];
 
-function maybeGoToNextLink() {
-  var nextIndex = parseInt(window.localStorage.getItem('next-index') || '0');
-  if (nextIndex >= links.length) {
-    // Done
-    window.localStorage.clear();
+// window.addEventListener('unload', function() {});
+
+window.addEventListener('load', function() {
+  console.log(window.location.href);
+
+  if (window.location.hash === '') {
     return;
   }
 
-  window.localStorage.setItem('next-index', (nextIndex + 1).toString());
-  window.location.href = links[nextIndex];
-}
+  let lastIndex = parseInt(window.location.hash.substr(1));
+  let nextIndex = lastIndex + 1;
 
-// We need to listen for unload so we aren't cached in the bfcache
-// and always get "load" events.
-window.addEventListener("unload", function() {});
-
-window.addEventListener("load", function(e) {
-  // Without setTimeout, changing window.location in onload always has the effect of replacing the current history entry.
-  window.setTimeout(maybeGoToNextLink, 0);
+  if (nextIndex < links.length) {
+    window.setTimeout(function() {
+    window.location.hash = nextIndex.toString();
+    window.setTimeout(function() {
+    window.location.href = links[nextIndex];
+    }, 0);
+    }, 0);
+  } else {
+    window.location.hash = '';
+  }
 });
 
-})();
+function start() {
+  window.setTimeout(function() {
+  window.location.hash = '0';
+  window.setTimeout(function() {
+  window.location.href = links[0];
+  }, 0);
+  }, 0);
+}
 </script>
 </head>
 <body>
-
+<a href="#" onclick="start();">xkcd</a>
 </body>
 </html>
